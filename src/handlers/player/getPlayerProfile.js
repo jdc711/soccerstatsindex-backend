@@ -1,0 +1,51 @@
+const Player = require('/opt/models/player');
+const mongoose = require('/opt/node_modules/mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
+// Database Connection
+const db = require('/opt/db/db')
+
+exports.handler = async (event) => {
+    try {
+        await db();
+        let playerId = event.queryStringParameters && event.queryStringParameters.playerId;
+        if (!playerId) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: "playerId is required" }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+        }
+    
+        playerId = new ObjectId(playerId);
+        let playerProfile = await Player.aggregate([
+        { $match: {_id: playerId} },
+        { $lookup: { from: 'club', localField: '_club_ids', foreignField: '_id', as: 'club_info' } },
+        { $lookup: { from: 'club', localField: '_current_club_id', foreignField: '_id', as: 'current_club_info' } },
+        ]);
+        // Sort the club_info array in the application code
+        if (playerProfile.length > 0) {
+            playerProfile[0].club_info.sort((a, b) => a.name.localeCompare(b.name));
+        }
+    
+        return {
+            statusCode: 200,
+            body: JSON.stringify(playerProfile),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+    } 
+    catch (err) {
+        console.error(err); // Logging the error
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Server Error' }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+    }
+};

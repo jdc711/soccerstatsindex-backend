@@ -1,2 +1,0 @@
-# soccerstatsindex-backend
-serverless backend

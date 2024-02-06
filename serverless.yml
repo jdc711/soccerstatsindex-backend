@@ -1,0 +1,38 @@
+org: jdc711
+app: soccerstatsindex-backend
+# serverless.yml
+service: soccerstatsindex-backend
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  playerFunction:
+    handler: serverless-handlers/playerHandler.handler
+    events:
+      - http:
+          path: public/player/{action+}
+          method: any
+  clubFunction:
+    handler: serverless-handlers/clubHandler.handler
+    events:
+      - http:
+          path: public/club/{action+}
+          method: any
+  leagueFunction:
+    handler: serverless-handlers/leagueHandler.handler
+    events:
+      - http:
+          path: public/league/{action+}
+          method: any
+  seasonFunction:
+    handler: serverless-handlers/seasonHandler.handler
+    events:
+      - http:
+          path: public/season/{action+}
+          method: any
+
+package:
+  individually: true
+  excludeDevDependencies: true
