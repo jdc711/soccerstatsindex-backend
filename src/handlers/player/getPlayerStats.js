@@ -7,22 +7,16 @@ exports.handler = async (event) => {
     try {
         await db();
 
-        let playerId = event.queryStringParameters && event.queryStringParameters.playerId;
-        let clubId = event.queryStringParameters && event.queryStringParameters.clubId;
-
-        playerId = new ObjectId(playerId)
+        let playerId = event.queryStringParameters.playerId;
+        let clubId = event.queryStringParameters.clubId;
+        
+        playerId = new ObjectId(playerId);
         if (clubId){
             clubId = new ObjectId(clubId);
         }
-  
-        let sortColumn = event.queryStringParameters && event.queryStringParameters.sortColumn;
-        let sortDirection = event.queryStringParameters && event.queryStringParameters.sortDirection;
-        if (!sortColumn){
-            sortColumn = "";
-        }
-        if (!sortDirection){
-            sortDirection = "";
-        }
+        
+        let sortColumn = event.queryStringParameters.sortColumn;
+        let sortDirection = event.queryStringParameters.sortDirection;
    
         let playerStats;
         if (!clubId){
@@ -85,7 +79,7 @@ exports.handler = async (event) => {
         console.error(err); // Logging the error
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Server Error' }),
+            body: JSON.stringify({ message: err }),
             headers: {
                 'Content-Type': 'application/json',
             },

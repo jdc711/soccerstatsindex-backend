@@ -7,12 +7,11 @@ const db = require('/opt/db/db')
 exports.handler = async (event) => {    
 
     await db();       
-    let leagueIds = event.queryStringParameters && event.queryStringParameters.leagueIds;
-    
-    const season = event.queryStringParameters && event.queryStringParameters.season;
-    const isClub = event.queryStringParameters && event.queryStringParameters.isClub;
-    let clubIds = event.queryStringParameters && event.queryStringParameters.clubIds; 
-    const category = event.queryStringParameters && event.queryStringParameters.category;
+    let leagueIds = event.queryStringParameters.leagueIds;
+    const season = event.queryStringParameters.season;
+    const isClub = event.queryStringParameters.isClub;
+    let clubIds = event.queryStringParameters.clubIds; 
+    const category = event.queryStringParameters.category;
     let currentPage = parseInt(event.queryStringParameters.currentPage) || 1;
     const pageLimit = parseInt(event.queryStringParameters.pageLimit) || 10; 
     let skip = (currentPage - 1) * pageLimit;

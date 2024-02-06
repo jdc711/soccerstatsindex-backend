@@ -7,13 +7,13 @@ exports.handler = async (event) => {
     try {
         await db();
 
-        const nameToSearch = event.queryStringParameters && event.queryStringParameters.name; 
+        const nameToSearch = event.queryStringParameters.name; 
         
         const currentPage = parseInt(event.queryStringParameters.currentPage) || 1;
         const pageLimit = parseInt(event.queryStringParameters.pageLimit) || 10; 
         const skip = (currentPage - 1) * pageLimit;
-        const sortColumn = event.queryStringParameters && event.queryStringParameters.sortColumn;
-        const sortDirection = event.queryStringParameters && event.queryStringParameters.sortDirection;
+        const sortColumn = event.queryStringParameters.sortColumn;
+        const sortDirection = event.queryStringParameters.sortDirection;
   
       let players;
       let totalPlayerCount;

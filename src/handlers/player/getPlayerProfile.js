@@ -8,16 +8,7 @@ const db = require('/opt/db/db')
 exports.handler = async (event) => {
     try {
         await db();
-        let playerId = event.queryStringParameters && event.queryStringParameters.playerId;
-        if (!playerId) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: "playerId is required" }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            };
-        }
+        let playerId = event.queryStringParameters.playerId;
     
         playerId = new ObjectId(playerId);
         let playerProfile = await Player.aggregate([
