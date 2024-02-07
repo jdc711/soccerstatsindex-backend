@@ -7,7 +7,7 @@ const db = require('/opt/db/db')
 exports.handler = async (event) => {
     try {
         await db();
-        let leagueIds = event.queryStringParameters.leagueIds; 
+        let leagueIds = event.multiValueQueryStringParameters["leagueIds[]"]; 
         if (!leagueIds){
             leagueIds = [];
         }
