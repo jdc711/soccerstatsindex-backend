@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 mongoose.set('debug', true);
 
-// Ensure the right dotenv configuration based on the environment
-if (process.env.NODE_ENV === 'production') {
-  require('dotenv').config({ path: '.env.production' });
-} else {
-  require('dotenv').config({ path: '.env.development' });
-}
+// // Ensure the right dotenv configuration based on the environment
+// if (process.env.NODE_ENV === 'production') {
+//   require('dotenv').config({ path: '.env.production' });
+// } else {
+//   require('dotenv').config({ path: '.env.development' });
+// }
 
 let cachedDb = null;
 
 const connectDB = async () => {
   // Use the existing database connection if it's already been established
-  if (cachedDb) {
+  if (cachedDb && mongoose.connection.readyState === 1) {
     console.log('Using existing database connection');
     return;
   }

@@ -5,7 +5,7 @@ let cachedDb = null;
 
 const connectDB = async () => {
   // Use the existing database connection if it's already been established
-  if (cachedDb) {
+  if (cachedDb && mongoose.connection.readyState === 1) {
     console.log('Using existing database connection');
     return;
   }
