@@ -3,7 +3,8 @@ const PlayerStats = require('/opt/models/player-stats');
 // Database Connection
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+    context.callbackWaitsForEmptyEventLoop = false; 
     try {
         await db();
         const isClub = event.queryStringParameters.isClub;

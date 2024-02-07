@@ -5,7 +5,9 @@ const ObjectId = mongoose.Types.ObjectId;
 // Database Connection
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+
     try {
         await db();
         let clubId = event.queryStringParameters.clubId; 

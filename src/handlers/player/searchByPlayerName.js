@@ -3,8 +3,9 @@ const Player = require('/opt/models/player');
 // Database Connection
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {  
-    try {
+exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false; 
+  try {
         await db();
 
         const nameToSearch = event.queryStringParameters.name; 
@@ -55,7 +56,7 @@ exports.handler = async (event) => {
             "Access-Control-Allow-Credentials": true
         },
     };
-    } catch (err) {
+  } catch (err) {
         console.error(err); // Logging the error
         return {
             statusCode: 500,

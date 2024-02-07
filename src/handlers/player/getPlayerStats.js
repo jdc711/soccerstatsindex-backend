@@ -3,7 +3,9 @@ const mongoose = require('/opt/node_modules/mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
     try {
         await db();
 

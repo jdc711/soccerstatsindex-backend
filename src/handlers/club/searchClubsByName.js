@@ -3,7 +3,9 @@ const Club = require('/opt/models/club');
 // Database Connection
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+
     try {
         await db();
         const nameToSearch = event.queryStringParameters.name; 

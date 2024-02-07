@@ -4,8 +4,10 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const db = require('/opt/db/db')
 
-exports.handler = async (event) => {    
-
+exports.handler = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+ 
+  try {
     await db();       
     let leagueIds = event.multiValueQueryStringParameters["leagueIds[]"];
     const season = event.queryStringParameters.season;
@@ -104,67 +106,67 @@ exports.handler = async (event) => {
       isClubMatchCondition = { 'is-club': isClubBoolean };
     }
   
-    try {
-      let totalCount = await PlayerStats.aggregate([
-        { $match: matchCondition },
-        { $lookup: { from: 'club', localField: '_club_id', foreignField: '_id', as: 'club_info' } },
-        { $unwind: '$club_info' },
-        { $addFields: { 'is-club': '$club_info.is-club'} },
-        { $match: isClubMatchCondition }, 
-        { $lookup: { from: 'league', localField: '_league_id', foreignField: '_id', as: 'league_info' } },
-        { $lookup: { from: 'player', localField: '_player_id', foreignField: '_id', as: 'player_info' } },
-        { $sort: sortCondition },
-        { $count: "totalCount" }
-      ]);
+   
+    let totalCount = await PlayerStats.aggregate([
+      { $match: matchCondition },
+      { $lookup: { from: 'club', localField: '_club_id', foreignField: '_id', as: 'club_info' } },
+      { $unwind: '$club_info' },
+      { $addFields: { 'is-club': '$club_info.is-club'} },
+      { $match: isClubMatchCondition }, 
+      { $lookup: { from: 'league', localField: '_league_id', foreignField: '_id', as: 'league_info' } },
+      { $lookup: { from: 'player', localField: '_player_id', foreignField: '_id', as: 'player_info' } },
+      { $sort: sortCondition },
+      { $count: "totalCount" }
+    ]);
       
-      if (totalCount.length === 0){
-        totalCount = 0;
-      }
-      else{
-        totalCount = totalCount[0]["totalCount"];
-      }
+    if (totalCount.length === 0){
+      totalCount = 0;
+    }
+    else{
+      totalCount = totalCount[0]["totalCount"];
+    }
       
-      // Ensure totalCount does not exceed 100
-      totalCount = Math.min(totalCount, 100);
+    // Ensure totalCount does not exceed 100
+    totalCount = Math.min(totalCount, 100);
   
-      // Calculate totalPages based on the new totalCount
-      let totalPages = Math.ceil(totalCount / pageLimit);
+    // Calculate totalPages based on the new totalCount
+    let totalPages = Math.ceil(totalCount / pageLimit);
   
-      // Adjust currentPage if necessary
-      if (currentPage > totalPages) {
-        // max function used in the case totalPages = 0
-        currentPage = Math.max(1,totalPages);
-      }
+    // Adjust currentPage if necessary
+    if (currentPage > totalPages) {
+      // max function used in the case totalPages = 0
+      currentPage = Math.max(1,totalPages);
+    }
   
-      // Calculate skip based on the adjusted currentPage
-      skip = (currentPage - 1) * pageLimit;
+    // Calculate skip based on the adjusted currentPage
+    skip = (currentPage - 1) * pageLimit;
       
-      let topGoalScorersStats = await PlayerStats.aggregate([
-        { $match: matchCondition },
-        { $lookup: { from: 'club', localField: '_club_id', foreignField: '_id', as: 'club_info' } },
-        { $unwind: '$club_info' },
-        { $addFields: { 'is-club': '$club_info.is-club' } },
-        { $match: isClubMatchCondition }, 
-            { $lookup: { from: 'league', localField: '_league_id', foreignField: '_id', as: 'league_info' } },
-            { $lookup: { from: 'player', localField: '_player_id', foreignField: '_id', as: 'player_info' } },
-        { $sort: sortCondition },
-      ]).skip(skip).limit(pageLimit);
+    let topGoalScorersStats = await PlayerStats.aggregate([
+      { $match: matchCondition },
+      { $lookup: { from: 'club', localField: '_club_id', foreignField: '_id', as: 'club_info' } },
+      { $unwind: '$club_info' },
+      { $addFields: { 'is-club': '$club_info.is-club' } },
+      { $match: isClubMatchCondition }, 
+          { $lookup: { from: 'league', localField: '_league_id', foreignField: '_id', as: 'league_info' } },
+          { $lookup: { from: 'player', localField: '_player_id', foreignField: '_id', as: 'player_info' } },
+      { $sort: sortCondition },
+    ]).skip(skip).limit(pageLimit);
       
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-            topGoalScorersStats: topGoalScorersStats,
-            totalCount: totalCount,
-            totalPages: Math.ceil(totalCount / pageLimit),
-            currentPage: currentPage,
-        }),
-        headers: {
-            'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
-            "Access-Control-Allow-Credentials": true
-        },
-        };
-    } catch (err) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+          topGoalScorersStats: topGoalScorersStats,
+          totalCount: totalCount,
+          totalPages: Math.ceil(totalCount / pageLimit),
+          currentPage: currentPage,
+      }),
+      headers: {
+          'Content-Type': 'application/json',
+          "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
+          "Access-Control-Allow-Credentials": true
+      },
+    };
+  } catch (err) {
         console.error(err); // Logging the error
         return {
             statusCode: 500,
