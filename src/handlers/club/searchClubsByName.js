@@ -48,6 +48,8 @@ exports.handler = async (event) => {
         ),
         headers: {
             'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
+            "Access-Control-Allow-Credentials": true
         },
         };
     } catch (err) {
@@ -57,6 +59,8 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: err }),
             headers: {
                 'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
+                "Access-Control-Allow-Credentials": true
             },
         };
     }

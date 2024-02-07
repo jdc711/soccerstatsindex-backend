@@ -23,6 +23,8 @@ exports.handler = async (event) => {
         body: JSON.stringify(clubProfile),
         headers: {
             'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
+            "Access-Control-Allow-Credentials": true
         },
     };
     } catch (err) {
@@ -32,6 +34,8 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: 'Server Error' }),
             headers: {
                 'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "https://www.soccerstatsindex.com", // Adjust as necessary
+                "Access-Control-Allow-Credentials": true
             },
         };
     }
